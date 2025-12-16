@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Країни світу</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Інформація про країни</h1>
+        </header>
+
+        <main>
+            <div class="control-panel">
+                <label for="countrySelect">Оберіть країну:</label>
+                <select id="countrySelect">
+                    <option value="" disabled selected>Завантаження списку...</option>
+                </select>
+            </div>
+
+            <div id="countryInfo" class="country-info">
+                <p class="placeholder-text">Оберіть країну зі списку, щоб побачити деталі.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
