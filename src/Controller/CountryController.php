@@ -2,84 +2,44 @@
 
 namespace App\Controller;
 
+require_once __DIR__ . '/../Model/CountryRepository.php';
+
+use App\Model\CountryRepository;
+
 class CountryController
 {
-    /**
-     * Статичний список країн для демо-роутингу без БД.
-     * Імітує дані у форматі, який очікує front-end.
-     */
-    private array $countries = [
-        [
-            'alias' => 'ukraine',
-            'name' => [
-                'common' => 'Ukraine',
-                'official' => 'Ukraine',
-            ],
-            'capital' => ['Kyiv'],
-            'region' => 'Europe',
-            'subregion' => 'Eastern Europe',
-            'population' => 44130000,
-            'area' => 603628,
-            'timezones' => ['UTC+02:00'],
-            'languages' => ['ukr' => 'Ukrainian'],
-            'currencies' => ['UAH' => ['name' => 'Ukrainian hryvnia', 'symbol' => '₴']],
-            'flags' => [
-                'png' => '/assets/flags/ua.png',
-                'svg' => '/assets/flags/ua.svg',
-            ],
-        ],
-        [
-            'alias' => 'poland',
-            'name' => [
-                'common' => 'Poland',
-                'official' => 'Republic of Poland',
-            ],
-            'capital' => ['Warsaw'],
-            'region' => 'Europe',
-            'subregion' => 'Central Europe',
-            'population' => 38386000,
-            'area' => 312679,
-            'timezones' => ['UTC+01:00'],
-            'languages' => ['pol' => 'Polish'],
-            'currencies' => ['PLN' => ['name' => 'Polish złoty', 'symbol' => 'zł']],
-            'flags' => [
-                'png' => '/assets/flags/pl.png',
-                'svg' => '/assets/flags/pl.svg',
-            ],
-        ],
-    ];
+    private CountryRepository $countryRepository;
 
-    /**
-     * Повертає список країн (тільки alias та назви).
-     */
-    public function list(): void
+    public function __construct()
     {
-        $list = array_map(function ($country) {
-            return [
-                'alias' => $country['alias'],
-                'name' => $country['name'],
-            ];
-        }, $this->countries);
-
-        http_response_code(200);
-        echo json_encode($list);
+        $this->countryRepository = new CountryRepository();
     }
 
     /**
-     * Повертає деталі конкретної країни за alias.
+     * Повертає список країн з бази даних.
+     */
+    public function list(): void
+    {
+        $data = $this->countryRepository->findAll();
+        http_response_code(200);
+        echo json_encode($data);
+    }
+
+    /**
+     * Повертає інформацію про країну з бази даних.
+     * @param string $alias
      */
     public function show(string $alias): void
     {
-        foreach ($this->countries as $country) {
-            if ($country['alias'] === $alias) {
-                http_response_code(200);
-                echo json_encode($country);
-                return;
-            }
-        }
+        $data = $this->countryRepository->findByAlias($alias);
 
-        http_response_code(404);
-        echo json_encode(['message' => 'Country not found']);
+        if ($data) {
+            http_response_code(200);
+            echo json_encode($data);
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'Country not found']);
+        }
     }
 }
 
